@@ -5,8 +5,7 @@ import "./index.css";
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("/nabung-bersama/sw.js")
+    navigator.serviceWorker.register("/sw.js")
       .then((registration) => {
         console.log("Nabung Bersama PWA ready:", registration.scope);
       })
