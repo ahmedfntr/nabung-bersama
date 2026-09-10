@@ -863,3 +863,182 @@ footer {
     grid-template-columns: 1fr 1fr 1fr;
   }
 }
+
+/* =========================================
+   EDIT FORM & ACTION BUTTONS
+   ========================================= */
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icon-edit,
+.icon-delete {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.icon-edit {
+  background: #eef8f2;
+  color: #26764f;
+}
+
+.icon-edit:hover {
+  background: #dcefe4;
+  transform: translateY(-1px);
+}
+
+.icon-delete {
+  background: #fff1f1;
+  color: #d45b5b;
+}
+
+.icon-delete:hover {
+  background: #ffe1e1;
+  transform: translateY(-1px);
+}
+
+
+/* EDIT FORM */
+
+.edit-form {
+  margin: 14px 0 18px;
+  padding: 18px;
+  border: 1px solid #dce8e1;
+  border-radius: 16px;
+  background: #f8fbf9;
+}
+
+.edit-form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.edit-form-header strong {
+  font-size: 15px;
+  color: #17352a;
+}
+
+.edit-form-header .icon-delete {
+  width: 30px;
+  height: 30px;
+}
+
+.edit-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.cancel-btn {
+  border: 1px solid #d8e2dc;
+  background: white;
+  color: #52635a;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn:hover {
+  background: #f1f5f2;
+}
+
+.edit-form .save-btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 17px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  background: #26764f;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.edit-form .save-btn:hover {
+  background: #1e6140;
+  transform: translateY(-1px);
+}
+
+
+/* TRANSACTION */
+
+.transaction {
+  transition: background 0.2s ease;
+}
+
+.transaction:hover {
+  background: #fafcfb;
+}
+
+.transaction .action-buttons {
+  margin-left: 8px;
+}
+
+.transaction-money {
+  white-space: nowrap;
+}
+
+
+/* GOAL ACTION */
+
+.goal-header .action-buttons {
+  margin-left: 12px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+  .edit-form {
+    padding: 14px;
+  }
+
+  .edit-form-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .edit-form-actions button {
+    width: 100%;
+  }
+
+  .transaction {
+    flex-wrap: wrap;
+  }
+
+  .transaction-money {
+    margin-left: auto;
+  }
+
+  .transaction .action-buttons {
+    width: 100%;
+    justify-content: flex-end;
+    margin-left: 0;
+    margin-top: 8px;
+  }
+
+  .goal-header {
+    gap: 10px;
+  }
+
+  .goal-header .action-buttons {
+    margin-left: auto;
+  }
+}
