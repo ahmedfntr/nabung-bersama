@@ -520,11 +520,31 @@ function Dashboard({ user, household, onLogout }) {
   };
 
   useEffect(() => {
-    loadIncome();
-    loadExpenses();
-    loadDebts();
-    loadGoals();
-  }, []);
+  loadIncome();
+  loadExpenses();
+  loadDebts();
+  loadGoals();
+
+  const incomeChannel = supabase
+    .channel("income-realtime")
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "income",
+        filter: `household_id=eq.${HOUSEHOLD_ID}`,
+      },
+      () => {
+        loadIncome();
+      }
+    )
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(incomeChannel);
+  };
+}, []);
 
   /* =======================================================
      CLOSE FORMS
