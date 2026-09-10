@@ -541,8 +541,25 @@ function Dashboard({ user, household, onLogout }) {
     )
     .subscribe();
 
+  const expenseChannel = supabase
+    .channel("expenses-realtime")
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "expenses",
+        filter: `household_id=eq.${HOUSEHOLD_ID}`,
+      },
+      () => {
+        loadExpenses();
+      }
+    )
+    .subscribe();
+
   return () => {
     supabase.removeChannel(incomeChannel);
+    supabase.removeChannel(expenseChannel);
   };
 }, []);
 
