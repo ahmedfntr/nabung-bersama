@@ -17,7 +17,8 @@ import {
 
 import { supabase } from "./lib/supabase";
 
-const HOUSEHOLD_ID = "a548fbaa-26c0-436a-bd3f-a7664639eccd";
+const HOUSEHOLD_ID =
+  "a548fbaa-26c0-436a-bd3f-a7664639eccd";
 
 const initialData = {
   income: [],
@@ -60,10 +61,11 @@ function LoginScreen({ onLogin }) {
 
     setLoading(true);
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { data, error } =
+      await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
     setLoading(false);
 
@@ -99,7 +101,9 @@ function LoginScreen({ onLogin }) {
                 type="email"
                 placeholder="Masukkan email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) =>
+                  setEmail(e.target.value)
+                }
                 autoComplete="email"
               />
             </div>
@@ -115,7 +119,9 @@ function LoginScreen({ onLogin }) {
                 type="password"
                 placeholder="Masukkan password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) =>
+                  setPassword(e.target.value)
+                }
                 autoComplete="current-password"
               />
             </div>
@@ -134,7 +140,10 @@ function LoginScreen({ onLogin }) {
           >
             {loading ? (
               <>
-                <Loader2 size={18} className="spin" />
+                <Loader2
+                  size={18}
+                  className="spin"
+                />
                 Memproses...
               </>
             ) : (
@@ -144,7 +153,8 @@ function LoginScreen({ onLogin }) {
         </form>
 
         <div className="login-info">
-          Gunakan akun Ahmed atau Nia yang sudah dibuat di Supabase.
+          Gunakan akun Ahmed atau Nia yang sudah
+          dibuat di Supabase.
         </div>
       </div>
     </div>
@@ -160,9 +170,14 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [household, setHousehold] = useState(null);
 
-  const [checkingAuth, setCheckingAuth] = useState(true);
-  const [loadingHousehold, setLoadingHousehold] = useState(false);
-  const [authError, setAuthError] = useState("");
+  const [checkingAuth, setCheckingAuth] =
+    useState(true);
+
+  const [loadingHousehold, setLoadingHousehold] =
+    useState(false);
+
+  const [authError, setAuthError] =
+    useState("");
 
   useEffect(() => {
     let mounted = true;
@@ -188,20 +203,22 @@ export default function App() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (!mounted) return;
+    } = supabase.auth.onAuthStateChange(
+      async (_event, session) => {
+        if (!mounted) return;
 
-      setSession(session);
-      setUser(session?.user ?? null);
+        setSession(session);
+        setUser(session?.user ?? null);
 
-      if (session?.user) {
-        await loadHousehold(session.user.id);
-      } else {
-        setHousehold(null);
+        if (session?.user) {
+          await loadHousehold(session.user.id);
+        } else {
+          setHousehold(null);
+        }
+
+        setCheckingAuth(false);
       }
-
-      setCheckingAuth(false);
-    });
+    );
 
     return () => {
       mounted = false;
@@ -229,7 +246,10 @@ export default function App() {
     setLoadingHousehold(false);
 
     if (error) {
-      console.error("Gagal mengambil household:", error);
+      console.error(
+        "Gagal mengambil household:",
+        error
+      );
 
       setAuthError(
         "Akun berhasil login, tetapi household Ahmed & Nia belum dapat diakses."
@@ -252,20 +272,30 @@ export default function App() {
   if (checkingAuth) {
     return (
       <div className="loading-page">
-        <Loader2 size={30} className="spin" />
+        <Loader2
+          size={30}
+          className="spin"
+        />
+
         <p>Memeriksa sesi...</p>
       </div>
     );
   }
 
   if (!session || !user) {
-    return <LoginScreen onLogin={setUser} />;
+    return (
+      <LoginScreen onLogin={setUser} />
+    );
   }
 
   if (loadingHousehold) {
     return (
       <div className="loading-page">
-        <Loader2 size={30} className="spin" />
+        <Loader2
+          size={30}
+          className="spin"
+        />
+
         <p>Menghubungkan ke household...</p>
       </div>
     );
@@ -277,7 +307,9 @@ export default function App() {
         <div className="access-card">
           <Wallet size={34} />
 
-          <h2>Akses Household Bermasalah</h2>
+          <h2>
+            Akses Household Bermasalah
+          </h2>
 
           <p>
             {authError ||
@@ -309,47 +341,84 @@ export default function App() {
    DASHBOARD
 ========================================================= */
 
-function Dashboard({ user, household, onLogout }) {
+function Dashboard({
+  user,
+  household,
+  onLogout,
+}) {
   const [data, setData] = useState(() => {
     try {
-      const savedData = localStorage.getItem(
-        "nabung-bersama-data"
-      );
+      const savedData =
+        localStorage.getItem(
+          "nabung-bersama-data"
+        );
 
       if (savedData) {
-        const parsed = JSON.parse(savedData);
+        const parsed = JSON.parse(
+          savedData
+        );
 
         return {
           income: [],
           expenses: [],
-          debts: parsed.debts || [],
+          debts: [],
           goals: parsed.goals || [],
         };
       }
     } catch (error) {
-      console.error("Gagal membaca localStorage:", error);
+      console.error(
+        "Gagal membaca localStorage:",
+        error
+      );
     }
 
     return { ...initialData };
   });
 
-  const [incomeLoading, setIncomeLoading] = useState(true);
-  const [expenseLoading, setExpenseLoading] = useState(true);
+  const [incomeLoading, setIncomeLoading] =
+    useState(true);
 
-  const [incomeError, setIncomeError] = useState("");
-  const [expenseError, setExpenseError] = useState("");
+  const [expenseLoading, setExpenseLoading] =
+    useState(true);
 
-  const [incomeSaving, setIncomeSaving] = useState(false);
-  const [expenseSaving, setExpenseSaving] = useState(false);
+  const [debtLoading, setDebtLoading] =
+    useState(true);
 
-  const [period, setPeriod] = useState("all");
+  const [incomeError, setIncomeError] =
+    useState("");
 
-  const [showIncome, setShowIncome] = useState(false);
-  const [showExpense, setShowExpense] = useState(false);
-  const [showDebt, setShowDebt] = useState(false);
-  const [showGoal, setShowGoal] = useState(false);
+  const [expenseError, setExpenseError] =
+    useState("");
 
-  const [editing, setEditing] = useState(null);
+  const [debtError, setDebtError] =
+    useState("");
+
+  const [incomeSaving, setIncomeSaving] =
+    useState(false);
+
+  const [expenseSaving, setExpenseSaving] =
+    useState(false);
+
+  const [debtSaving, setDebtSaving] =
+    useState(false);
+
+  const [period, setPeriod] =
+    useState("all");
+
+  const [showIncome, setShowIncome] =
+    useState(false);
+
+  const [showExpense, setShowExpense] =
+    useState(false);
+
+  const [showDebt, setShowDebt] =
+    useState(false);
+
+  const [showGoal, setShowGoal] =
+    useState(false);
+
+  const [editing, setEditing] =
+    useState(null);
 
   /* =======================================================
      LOAD INCOME
@@ -359,17 +428,30 @@ function Dashboard({ user, household, onLogout }) {
     setIncomeLoading(true);
     setIncomeError("");
 
-    const { data: incomeData, error } = await supabase
+    const {
+      data: incomeData,
+      error,
+    } = await supabase
       .from("income")
       .select(
         "id, owner, description, amount, transaction_date, created_at, household_id"
       )
-      .eq("household_id", HOUSEHOLD_ID)
-      .order("transaction_date", { ascending: false })
-      .order("created_at", { ascending: false });
+      .eq(
+        "household_id",
+        HOUSEHOLD_ID
+      )
+      .order("transaction_date", {
+        ascending: false,
+      })
+      .order("created_at", {
+        ascending: false,
+      });
 
     if (error) {
-      console.error("Gagal mengambil income:", error);
+      console.error(
+        "Gagal mengambil income:",
+        error
+      );
 
       setIncomeError(
         `Pemasukan belum dapat dimuat: ${error.message}`
@@ -379,16 +461,21 @@ function Dashboard({ user, household, onLogout }) {
       return;
     }
 
-    const formattedIncome = (incomeData || []).map((item) => ({
-      id: item.id,
-      owner: item.owner,
-      description: item.description,
-      amount: Number(item.amount || 0),
-      date: item.transaction_date,
-      transaction_date: item.transaction_date,
-      created_at: item.created_at,
-      household_id: item.household_id,
-    }));
+    const formattedIncome =
+      (incomeData || []).map((item) => ({
+        id: item.id,
+        owner: item.owner,
+        description: item.description,
+        amount: Number(
+          item.amount || 0
+        ),
+        date: item.transaction_date,
+        transaction_date:
+          item.transaction_date,
+        created_at: item.created_at,
+        household_id:
+          item.household_id,
+      }));
 
     setData((prev) => ({
       ...prev,
@@ -406,17 +493,30 @@ function Dashboard({ user, household, onLogout }) {
     setExpenseLoading(true);
     setExpenseError("");
 
-    const { data: expenseData, error } = await supabase
+    const {
+      data: expenseData,
+      error,
+    } = await supabase
       .from("expenses")
       .select(
         "id, name, amount, transaction_date, created_at, household_id"
       )
-      .eq("household_id", HOUSEHOLD_ID)
-      .order("transaction_date", { ascending: false })
-      .order("created_at", { ascending: false });
+      .eq(
+        "household_id",
+        HOUSEHOLD_ID
+      )
+      .order("transaction_date", {
+        ascending: false,
+      })
+      .order("created_at", {
+        ascending: false,
+      });
 
     if (error) {
-      console.error("Gagal mengambil expenses:", error);
+      console.error(
+        "Gagal mengambil expenses:",
+        error
+      );
 
       setExpenseError(
         `Pengeluaran belum dapat dimuat: ${error.message}`
@@ -426,23 +526,39 @@ function Dashboard({ user, household, onLogout }) {
       return;
     }
 
-    const formattedExpenses = (expenseData || []).map((item) => {
-      const date = item.transaction_date
-        ? new Date(`${item.transaction_date}T00:00:00`)
-        : null;
+    const formattedExpenses =
+      (expenseData || []).map(
+        (item) => {
+          const date =
+            item.transaction_date
+              ? new Date(
+                  `${item.transaction_date}T00:00:00`
+                )
+              : null;
 
-      return {
-        id: item.id,
-        name: item.name,
-        amount: Number(item.amount || 0),
-        date: item.transaction_date,
-        transaction_date: item.transaction_date,
-        year: date ? date.getFullYear() : null,
-        month: date ? date.getMonth() + 1 : null,
-        created_at: item.created_at,
-        household_id: item.household_id,
-      };
-    });
+          return {
+            id: item.id,
+            name: item.name,
+            amount: Number(
+              item.amount || 0
+            ),
+            date:
+              item.transaction_date,
+            transaction_date:
+              item.transaction_date,
+            year: date
+              ? date.getFullYear()
+              : null,
+            month: date
+              ? date.getMonth() + 1
+              : null,
+            created_at:
+              item.created_at,
+            household_id:
+              item.household_id,
+          };
+        }
+      );
 
     setData((prev) => ({
       ...prev,
@@ -452,28 +568,114 @@ function Dashboard({ user, household, onLogout }) {
     setExpenseLoading(false);
   };
 
+  /* =======================================================
+     LOAD DEBTS
+  ======================================================= */
+
+  const loadDebts = async () => {
+    setDebtLoading(true);
+    setDebtError("");
+
+    const {
+      data: debtData,
+      error,
+    } = await supabase
+      .from("debts")
+      .select(
+        "id, name, amount, remaining, transaction_date, created_at, household_id"
+      )
+      .eq(
+        "household_id",
+        HOUSEHOLD_ID
+      )
+      .order("transaction_date", {
+        ascending: false,
+      })
+      .order("created_at", {
+        ascending: false,
+      });
+
+    if (error) {
+      console.error(
+        "Gagal mengambil debts:",
+        error
+      );
+
+      setDebtError(
+        `Cicilan belum dapat dimuat: ${error.message}`
+      );
+
+      setDebtLoading(false);
+      return;
+    }
+
+    const formattedDebts =
+      (debtData || []).map(
+        (item) => {
+          const date =
+            item.transaction_date
+              ? new Date(
+                  `${item.transaction_date}T00:00:00`
+                )
+              : null;
+
+          return {
+            id: item.id,
+            name: item.name,
+            amount: Number(
+              item.amount || 0
+            ),
+            remaining: Number(
+              item.remaining || 0
+            ),
+            date:
+              item.transaction_date,
+            transaction_date:
+              item.transaction_date,
+            year: date
+              ? date.getFullYear()
+              : null,
+            month: date
+              ? date.getMonth() + 1
+              : null,
+            created_at:
+              item.created_at,
+            household_id:
+              item.household_id,
+          };
+        }
+      );
+
+    setData((prev) => ({
+      ...prev,
+      debts: formattedDebts,
+    }));
+
+    setDebtLoading(false);
+  };
+
   useEffect(() => {
     loadIncome();
     loadExpenses();
+    loadDebts();
   }, []);
 
   /* =======================================================
      LOCAL STORAGE
-     HANYA UNTUK CICILAN & TARGET SEMENTARA
+     HANYA UNTUK TARGET SEMENTARA
   ======================================================= */
 
   useEffect(() => {
     localStorage.setItem(
       "nabung-bersama-data",
       JSON.stringify({
-        debts: data.debts,
         goals: data.goals,
       })
     );
-  }, [data.debts, data.goals]);
+  }, [data.goals]);
 
   /* =======================================================
-     CLOSE FORMS
+     CLOSE FORM
   ======================================================= */
 
   const closeForms = () => {
@@ -492,20 +694,30 @@ function Dashboard({ user, household, onLogout }) {
     setIncomeSaving(true);
     setIncomeError("");
 
-    const { data: insertedIncome, error } = await supabase
+    const {
+      data: insertedIncome,
+      error,
+    } = await supabase
       .from("income")
       .insert({
         owner: item.owner,
-        description: item.description || null,
-        amount: Number(item.amount),
+        description:
+          item.description || null,
+        amount: Number(
+          item.amount
+        ),
         transaction_date: item.date,
-        household_id: HOUSEHOLD_ID,
+        household_id:
+          HOUSEHOLD_ID,
       })
       .select()
       .single();
 
     if (error) {
-      console.error("Gagal menyimpan income:", error);
+      console.error(
+        "Gagal menyimpan income:",
+        error
+      );
 
       setIncomeError(
         `Gagal menyimpan pemasukan: ${error.message}`
@@ -517,18 +729,29 @@ function Dashboard({ user, household, onLogout }) {
 
     const newIncome = {
       id: insertedIncome.id,
-      owner: insertedIncome.owner,
-      description: insertedIncome.description,
-      amount: Number(insertedIncome.amount || 0),
-      date: insertedIncome.transaction_date,
-      transaction_date: insertedIncome.transaction_date,
-      created_at: insertedIncome.created_at,
-      household_id: insertedIncome.household_id,
+      owner:
+        insertedIncome.owner,
+      description:
+        insertedIncome.description,
+      amount: Number(
+        insertedIncome.amount || 0
+      ),
+      date:
+        insertedIncome.transaction_date,
+      transaction_date:
+        insertedIncome.transaction_date,
+      created_at:
+        insertedIncome.created_at,
+      household_id:
+        insertedIncome.household_id,
     };
 
     setData((prev) => ({
       ...prev,
-      income: [newIncome, ...prev.income],
+      income: [
+        newIncome,
+        ...prev.income,
+      ],
     }));
 
     setIncomeSaving(false);
@@ -543,21 +766,34 @@ function Dashboard({ user, household, onLogout }) {
     setIncomeSaving(true);
     setIncomeError("");
 
-    const { data: updatedIncome, error } = await supabase
+    const {
+      data: updatedIncome,
+      error,
+    } = await supabase
       .from("income")
       .update({
         owner: item.owner,
-        description: item.description || null,
-        amount: Number(item.amount),
-        transaction_date: item.date,
+        description:
+          item.description || null,
+        amount: Number(
+          item.amount
+        ),
+        transaction_date:
+          item.date,
       })
       .eq("id", item.id)
-      .eq("household_id", HOUSEHOLD_ID)
+      .eq(
+        "household_id",
+        HOUSEHOLD_ID
+      )
       .select()
       .single();
 
     if (error) {
-      console.error("Gagal update income:", error);
+      console.error(
+        "Gagal update income:",
+        error
+      );
 
       setIncomeError(
         `Gagal mengubah pemasukan: ${error.message}`
@@ -569,21 +805,31 @@ function Dashboard({ user, household, onLogout }) {
 
     const updatedItem = {
       id: updatedIncome.id,
-      owner: updatedIncome.owner,
-      description: updatedIncome.description,
-      amount: Number(updatedIncome.amount || 0),
-      date: updatedIncome.transaction_date,
-      transaction_date: updatedIncome.transaction_date,
-      created_at: updatedIncome.created_at,
-      household_id: updatedIncome.household_id,
+      owner:
+        updatedIncome.owner,
+      description:
+        updatedIncome.description,
+      amount: Number(
+        updatedIncome.amount || 0
+      ),
+      date:
+        updatedIncome.transaction_date,
+      transaction_date:
+        updatedIncome.transaction_date,
+      created_at:
+        updatedIncome.created_at,
+      household_id:
+        updatedIncome.household_id,
     };
 
     setData((prev) => ({
       ...prev,
-      income: prev.income.map((currentItem) =>
-        currentItem.id === updatedItem.id
-          ? updatedItem
-          : currentItem
+      income: prev.income.map(
+        (currentItem) =>
+          currentItem.id ===
+          updatedItem.id
+            ? updatedItem
+            : currentItem
       ),
     }));
 
@@ -596,7 +842,11 @@ function Dashboard({ user, household, onLogout }) {
   ======================================================= */
 
   const deleteIncome = async (id) => {
-    if (!window.confirm("Hapus pemasukan ini?")) {
+    if (
+      !window.confirm(
+        "Hapus pemasukan ini?"
+      )
+    ) {
       return;
     }
 
@@ -607,10 +857,16 @@ function Dashboard({ user, household, onLogout }) {
       .from("income")
       .delete()
       .eq("id", id)
-      .eq("household_id", HOUSEHOLD_ID);
+      .eq(
+        "household_id",
+        HOUSEHOLD_ID
+      );
 
     if (error) {
-      console.error("Gagal menghapus income:", error);
+      console.error(
+        "Gagal menghapus income:",
+        error
+      );
 
       setIncomeError(
         `Gagal menghapus pemasukan: ${error.message}`
@@ -631,26 +887,36 @@ function Dashboard({ user, household, onLogout }) {
   };
 
   /* =======================================================
-     ADD EXPENSE → SUPABASE
+     ADD EXPENSE
   ======================================================= */
 
   const addExpense = async (item) => {
     setExpenseSaving(true);
     setExpenseError("");
 
-    const { data: insertedExpense, error } = await supabase
+    const {
+      data: insertedExpense,
+      error,
+    } = await supabase
       .from("expenses")
       .insert({
         name: item.name,
-        amount: Number(item.amount),
-        transaction_date: item.date,
-        household_id: HOUSEHOLD_ID,
+        amount: Number(
+          item.amount
+        ),
+        transaction_date:
+          item.date,
+        household_id:
+          HOUSEHOLD_ID,
       })
       .select()
       .single();
 
     if (error) {
-      console.error("Gagal menyimpan expense:", error);
+      console.error(
+        "Gagal menyimpan expense:",
+        error
+      );
 
       setExpenseError(
         `Gagal menyimpan pengeluaran: ${error.message}`
@@ -660,31 +926,42 @@ function Dashboard({ user, household, onLogout }) {
       return;
     }
 
-    const expenseDate = insertedExpense.transaction_date
-      ? new Date(
-          `${insertedExpense.transaction_date}T00:00:00`
-        )
-      : null;
+    const expenseDate =
+      insertedExpense.transaction_date
+        ? new Date(
+            `${insertedExpense.transaction_date}T00:00:00`
+          )
+        : null;
 
     const newExpense = {
       id: insertedExpense.id,
-      name: insertedExpense.name,
-      amount: Number(insertedExpense.amount || 0),
-      date: insertedExpense.transaction_date,
-      transaction_date: insertedExpense.transaction_date,
+      name:
+        insertedExpense.name,
+      amount: Number(
+        insertedExpense.amount || 0
+      ),
+      date:
+        insertedExpense.transaction_date,
+      transaction_date:
+        insertedExpense.transaction_date,
       year: expenseDate
         ? expenseDate.getFullYear()
         : null,
       month: expenseDate
         ? expenseDate.getMonth() + 1
         : null,
-      created_at: insertedExpense.created_at,
-      household_id: insertedExpense.household_id,
+      created_at:
+        insertedExpense.created_at,
+      household_id:
+        insertedExpense.household_id,
     };
 
     setData((prev) => ({
       ...prev,
-      expenses: [newExpense, ...prev.expenses],
+      expenses: [
+        newExpense,
+        ...prev.expenses,
+      ],
     }));
 
     setExpenseSaving(false);
@@ -692,27 +969,39 @@ function Dashboard({ user, household, onLogout }) {
   };
 
   /* =======================================================
-     UPDATE EXPENSE → SUPABASE
+     UPDATE EXPENSE
   ======================================================= */
 
   const updateExpense = async (item) => {
     setExpenseSaving(true);
     setExpenseError("");
 
-    const { data: updatedExpense, error } = await supabase
+    const {
+      data: updatedExpense,
+      error,
+    } = await supabase
       .from("expenses")
       .update({
         name: item.name,
-        amount: Number(item.amount),
-        transaction_date: item.date,
+        amount: Number(
+          item.amount
+        ),
+        transaction_date:
+          item.date,
       })
       .eq("id", item.id)
-      .eq("household_id", HOUSEHOLD_ID)
+      .eq(
+        "household_id",
+        HOUSEHOLD_ID
+      )
       .select()
       .single();
 
     if (error) {
-      console.error("Gagal update expense:", error);
+      console.error(
+        "Gagal update expense:",
+        error
+      );
 
       setExpenseError(
         `Gagal mengubah pengeluaran: ${error.message}`
@@ -722,35 +1011,46 @@ function Dashboard({ user, household, onLogout }) {
       return;
     }
 
-    const expenseDate = updatedExpense.transaction_date
-      ? new Date(
-          `${updatedExpense.transaction_date}T00:00:00`
-        )
-      : null;
+    const expenseDate =
+      updatedExpense.transaction_date
+        ? new Date(
+            `${updatedExpense.transaction_date}T00:00:00`
+          )
+        : null;
 
     const updatedItem = {
       id: updatedExpense.id,
-      name: updatedExpense.name,
-      amount: Number(updatedExpense.amount || 0),
-      date: updatedExpense.transaction_date,
-      transaction_date: updatedExpense.transaction_date,
+      name:
+        updatedExpense.name,
+      amount: Number(
+        updatedExpense.amount || 0
+      ),
+      date:
+        updatedExpense.transaction_date,
+      transaction_date:
+        updatedExpense.transaction_date,
       year: expenseDate
         ? expenseDate.getFullYear()
         : null,
       month: expenseDate
         ? expenseDate.getMonth() + 1
         : null,
-      created_at: updatedExpense.created_at,
-      household_id: updatedExpense.household_id,
+      created_at:
+        updatedExpense.created_at,
+      household_id:
+        updatedExpense.household_id,
     };
 
     setData((prev) => ({
       ...prev,
-      expenses: prev.expenses.map((currentItem) =>
-        currentItem.id === updatedItem.id
-          ? updatedItem
-          : currentItem
-      ),
+      expenses:
+        prev.expenses.map(
+          (currentItem) =>
+            currentItem.id ===
+            updatedItem.id
+              ? updatedItem
+              : currentItem
+        ),
     }));
 
     setExpenseSaving(false);
@@ -758,11 +1058,15 @@ function Dashboard({ user, household, onLogout }) {
   };
 
   /* =======================================================
-     DELETE EXPENSE → SUPABASE
+     DELETE EXPENSE
   ======================================================= */
 
   const deleteExpense = async (id) => {
-    if (!window.confirm("Hapus pengeluaran ini?")) {
+    if (
+      !window.confirm(
+        "Hapus pengeluaran ini?"
+      )
+    ) {
       return;
     }
 
@@ -773,10 +1077,16 @@ function Dashboard({ user, household, onLogout }) {
       .from("expenses")
       .delete()
       .eq("id", id)
-      .eq("household_id", HOUSEHOLD_ID);
+      .eq(
+        "household_id",
+        HOUSEHOLD_ID
+      );
 
     if (error) {
-      console.error("Gagal menghapus expense:", error);
+      console.error(
+        "Gagal menghapus expense:",
+        error
+      );
 
       setExpenseError(
         `Gagal menghapus pengeluaran: ${error.message}`
@@ -788,32 +1098,249 @@ function Dashboard({ user, household, onLogout }) {
 
     setData((prev) => ({
       ...prev,
-      expenses: prev.expenses.filter(
-        (item) => item.id !== id
-      ),
+      expenses:
+        prev.expenses.filter(
+          (item) => item.id !== id
+        ),
     }));
 
     setExpenseSaving(false);
   };
 
   /* =======================================================
-     CICILAN & TARGET — LOCAL SEMENTARA
+     ADD DEBT → SUPABASE
   ======================================================= */
 
-  const addDebt = (item) => {
+  const addDebt = async (item) => {
+    setDebtSaving(true);
+    setDebtError("");
+
+    const {
+      data: insertedDebt,
+      error,
+    } = await supabase
+      .from("debts")
+      .insert({
+        name: item.name,
+        amount: Number(
+          item.amount
+        ),
+        remaining: Number(
+          item.remaining
+        ),
+        transaction_date:
+          item.date,
+        household_id:
+          HOUSEHOLD_ID,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error(
+        "Gagal menyimpan debt:",
+        error
+      );
+
+      setDebtError(
+        `Gagal menyimpan cicilan: ${error.message}`
+      );
+
+      setDebtSaving(false);
+      return;
+    }
+
+    const debtDate =
+      insertedDebt.transaction_date
+        ? new Date(
+            `${insertedDebt.transaction_date}T00:00:00`
+          )
+        : null;
+
+    const newDebt = {
+      id: insertedDebt.id,
+      name:
+        insertedDebt.name,
+      amount: Number(
+        insertedDebt.amount || 0
+      ),
+      remaining: Number(
+        insertedDebt.remaining || 0
+      ),
+      date:
+        insertedDebt.transaction_date,
+      transaction_date:
+        insertedDebt.transaction_date,
+      year: debtDate
+        ? debtDate.getFullYear()
+        : null,
+      month: debtDate
+        ? debtDate.getMonth() + 1
+        : null,
+      created_at:
+        insertedDebt.created_at,
+      household_id:
+        insertedDebt.household_id,
+    };
+
     setData((prev) => ({
       ...prev,
       debts: [
+        newDebt,
         ...prev.debts,
-        {
-          ...item,
-          id: crypto.randomUUID(),
-        },
       ],
     }));
 
+    setDebtSaving(false);
     closeForms();
   };
+
+  /* =======================================================
+     UPDATE DEBT → SUPABASE
+  ======================================================= */
+
+  const updateDebt = async (item) => {
+    setDebtSaving(true);
+    setDebtError("");
+
+    const {
+      data: updatedDebt,
+      error,
+    } = await supabase
+      .from("debts")
+      .update({
+        name: item.name,
+        amount: Number(
+          item.amount
+        ),
+        remaining: Number(
+          item.remaining
+        ),
+        transaction_date:
+          item.date,
+      })
+      .eq("id", item.id)
+      .eq(
+        "household_id",
+        HOUSEHOLD_ID
+      )
+      .select()
+      .single();
+
+    if (error) {
+      console.error(
+        "Gagal update debt:",
+        error
+      );
+
+      setDebtError(
+        `Gagal mengubah cicilan: ${error.message}`
+      );
+
+      setDebtSaving(false);
+      return;
+    }
+
+    const debtDate =
+      updatedDebt.transaction_date
+        ? new Date(
+            `${updatedDebt.transaction_date}T00:00:00`
+          )
+        : null;
+
+    const updatedItem = {
+      id: updatedDebt.id,
+      name:
+        updatedDebt.name,
+      amount: Number(
+        updatedDebt.amount || 0
+      ),
+      remaining: Number(
+        updatedDebt.remaining || 0
+      ),
+      date:
+        updatedDebt.transaction_date,
+      transaction_date:
+        updatedDebt.transaction_date,
+      year: debtDate
+        ? debtDate.getFullYear()
+        : null,
+      month: debtDate
+        ? debtDate.getMonth() + 1
+        : null,
+      created_at:
+        updatedDebt.created_at,
+      household_id:
+        updatedDebt.household_id,
+    };
+
+    setData((prev) => ({
+      ...prev,
+      debts: prev.debts.map(
+        (currentItem) =>
+          currentItem.id ===
+          updatedItem.id
+            ? updatedItem
+            : currentItem
+      ),
+    }));
+
+    setDebtSaving(false);
+    setEditing(null);
+  };
+
+  /* =======================================================
+     DELETE DEBT → SUPABASE
+  ======================================================= */
+
+  const deleteDebt = async (id) => {
+    if (
+      !window.confirm(
+        "Hapus cicilan ini?"
+      )
+    ) {
+      return;
+    }
+
+    setDebtSaving(true);
+    setDebtError("");
+
+    const { error } = await supabase
+      .from("debts")
+      .delete()
+      .eq("id", id)
+      .eq(
+        "household_id",
+        HOUSEHOLD_ID
+      );
+
+    if (error) {
+      console.error(
+        "Gagal menghapus debt:",
+        error
+      );
+
+      setDebtError(
+        `Gagal menghapus cicilan: ${error.message}`
+      );
+
+      setDebtSaving(false);
+      return;
+    }
+
+    setData((prev) => ({
+      ...prev,
+      debts: prev.debts.filter(
+        (item) => item.id !== id
+      ),
+    }));
+
+    setDebtSaving(false);
+  };
+
+  /* =======================================================
+     GOAL — LOCAL STORAGE SEMENTARA
+  ======================================================= */
 
   const addGoal = (item) => {
     setData((prev) => ({
@@ -830,14 +1357,18 @@ function Dashboard({ user, household, onLogout }) {
     closeForms();
   };
 
-  const deleteLocalItem = (type, id) => {
-    if (!window.confirm("Hapus data ini?")) {
+  const deleteLocalGoal = (id) => {
+    if (
+      !window.confirm(
+        "Hapus target ini?"
+      )
+    ) {
       return;
     }
 
     setData((prev) => ({
       ...prev,
-      [type]: prev[type].filter(
+      goals: prev.goals.filter(
         (item) => item.id !== id
       ),
     }));
@@ -850,18 +1381,17 @@ function Dashboard({ user, household, onLogout }) {
     });
   };
 
-  const updateLocalItem = (updatedItem) => {
-    const { type, item } = editing;
-
+  const updateLocalGoal = (
+    updatedItem
+  ) => {
     setData((prev) => ({
       ...prev,
-      [type]: prev[type].map((currentItem) =>
-        currentItem.id === item.id
-          ? {
-              ...updatedItem,
-              id: item.id,
-            }
-          : currentItem
+      goals: prev.goals.map(
+        (currentItem) =>
+          currentItem.id ===
+          updatedItem.id
+            ? updatedItem
+            : currentItem
       ),
     }));
 
@@ -878,135 +1408,196 @@ function Dashboard({ user, household, onLogout }) {
     }
 
     const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth() + 1;
 
-    return data.income.filter((item) => {
-      if (!item.transaction_date) {
-        return false;
-      }
+    const currentYear =
+      now.getFullYear();
 
-      const date = new Date(
-        `${item.transaction_date}T00:00:00`
-      );
+    const currentMonth =
+      now.getMonth() + 1;
 
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1;
+    return data.income.filter(
+      (item) => {
+        if (!item.transaction_date) {
+          return false;
+        }
 
-      if (period === "year") {
-        return year === currentYear;
-      }
-
-      if (period === "month") {
-        return (
-          year === currentYear &&
-          month === currentMonth
+        const date = new Date(
+          `${item.transaction_date}T00:00:00`
         );
-      }
 
-      return true;
-    });
+        const year =
+          date.getFullYear();
+
+        const month =
+          date.getMonth() + 1;
+
+        if (period === "year") {
+          return year === currentYear;
+        }
+
+        if (period === "month") {
+          return (
+            year === currentYear &&
+            month === currentMonth
+          );
+        }
+
+        return true;
+      }
+    );
   }, [data.income, period]);
 
   /* =======================================================
      FILTER EXPENSE
   ======================================================= */
 
-  const filteredExpenses = useMemo(() => {
-    if (period === "all") {
-      return data.expenses;
-    }
-
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth() + 1;
-
-    return data.expenses.filter((item) => {
-      if (!item.transaction_date) {
-        return false;
+  const filteredExpenses =
+    useMemo(() => {
+      if (period === "all") {
+        return data.expenses;
       }
 
-      const date = new Date(
-        `${item.transaction_date}T00:00:00`
+      const now = new Date();
+
+      const currentYear =
+        now.getFullYear();
+
+      const currentMonth =
+        now.getMonth() + 1;
+
+      return data.expenses.filter(
+        (item) => {
+          if (
+            !item.transaction_date
+          ) {
+            return false;
+          }
+
+          const date = new Date(
+            `${item.transaction_date}T00:00:00`
+          );
+
+          const year =
+            date.getFullYear();
+
+          const month =
+            date.getMonth() + 1;
+
+          if (period === "year") {
+            return (
+              year === currentYear
+            );
+          }
+
+          if (period === "month") {
+            return (
+              year === currentYear &&
+              month === currentMonth
+            );
+          }
+
+          return true;
+        }
       );
-
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1;
-
-      if (period === "year") {
-        return year === currentYear;
-      }
-
-      if (period === "month") {
-        return (
-          year === currentYear &&
-          month === currentMonth
-        );
-      }
-
-      return true;
-    });
-  }, [data.expenses, period]);
+    }, [data.expenses, period]);
 
   /* =======================================================
-     FILTER LOCAL DATA
+     FILTER DEBT
   ======================================================= */
 
-  const filterLocalItems = (items) => {
+  const filteredDebts = useMemo(() => {
     if (period === "all") {
-      return items;
+      return data.debts;
     }
 
     const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth() + 1;
 
-    return items.filter((item) => {
-      if (!item.year || !item.month) {
-        return false;
-      }
+    const currentYear =
+      now.getFullYear();
 
-      if (period === "year") {
-        return Number(item.year) === currentYear;
-      }
+    const currentMonth =
+      now.getMonth() + 1;
 
-      if (period === "month") {
-        return (
-          Number(item.year) === currentYear &&
-          Number(item.month) === currentMonth
+    return data.debts.filter(
+      (item) => {
+        if (!item.transaction_date) {
+          return false;
+        }
+
+        const date = new Date(
+          `${item.transaction_date}T00:00:00`
         );
+
+        const year =
+          date.getFullYear();
+
+        const month =
+          date.getMonth() + 1;
+
+        if (period === "year") {
+          return year === currentYear;
+        }
+
+        if (period === "month") {
+          return (
+            year === currentYear &&
+            month === currentMonth
+          );
+        }
+
+        return true;
       }
+    );
+  }, [data.debts, period]);
 
-      return true;
-    });
-  };
+  /* =======================================================
+     GOAL FILTER
+  ======================================================= */
 
-  const filteredDebts = filterLocalItems(data.debts);
-  const filteredGoals = filterLocalItems(data.goals);
+  const filteredGoals =
+    data.goals;
 
   /* =======================================================
      TOTAL
   ======================================================= */
 
-  const totalIncome = filteredIncome.reduce(
-    (sum, item) =>
-      sum + Number(item.amount || 0),
-    0
-  );
+  const totalIncome =
+    filteredIncome.reduce(
+      (sum, item) =>
+        sum +
+        Number(item.amount || 0),
+      0
+    );
 
-  const totalExpenses = filteredExpenses.reduce(
-    (sum, item) =>
-      sum + Number(item.amount || 0),
-    0
-  );
+  const totalExpenses =
+    filteredExpenses.reduce(
+      (sum, item) =>
+        sum +
+        Number(item.amount || 0),
+      0
+    );
 
-  const totalSaved = filteredGoals.reduce(
-    (sum, item) =>
-      sum + Number(item.saved || 0),
-    0
-  );
+  const totalSaved =
+    filteredGoals.reduce(
+      (sum, item) =>
+        sum +
+        Number(item.saved || 0),
+      0
+    );
 
-  const remaining = totalIncome - totalExpenses;
+  const totalDebtRemaining =
+    filteredDebts.reduce(
+      (sum, item) =>
+        sum +
+        Number(
+          item.remaining || 0
+        ),
+      0
+    );
+
+  const remaining =
+    totalIncome -
+    totalExpenses;
 
   /* =======================================================
      RENDER
@@ -1021,8 +1612,13 @@ function Dashboard({ user, household, onLogout }) {
           </div>
 
           <div>
-            <h1>Nabung Bersama</h1>
-            <span>{household.name}</span>
+            <h1>
+              Nabung Bersama
+            </h1>
+
+            <span>
+              {household.name}
+            </span>
           </div>
         </div>
 
@@ -1035,7 +1631,10 @@ function Dashboard({ user, household, onLogout }) {
             title="Logout"
           >
             <LogOut size={18} />
-            <span>Logout</span>
+
+            <span>
+              Logout
+            </span>
           </button>
         </div>
       </header>
@@ -1043,38 +1642,54 @@ function Dashboard({ user, household, onLogout }) {
       <main className="container">
         <section className="welcome-section">
           <div>
-            <h2>Keuangan Bersama</h2>
+            <h2>
+              Keuangan Bersama
+            </h2>
 
             <p>
-              Kelola pemasukan, pengeluaran, cicilan,
-              dan target tabungan bersama.
+              Kelola pemasukan,
+              pengeluaran, cicilan,
+              dan target tabungan
+              bersama.
             </p>
           </div>
 
           <div className="period-filter">
             <button
               className={
-                period === "all" ? "active" : ""
+                period === "all"
+                  ? "active"
+                  : ""
               }
-              onClick={() => setPeriod("all")}
+              onClick={() =>
+                setPeriod("all")
+              }
             >
               Semua
             </button>
 
             <button
               className={
-                period === "year" ? "active" : ""
+                period === "year"
+                  ? "active"
+                  : ""
               }
-              onClick={() => setPeriod("year")}
+              onClick={() =>
+                setPeriod("year")
+              }
             >
               Tahun
             </button>
 
             <button
               className={
-                period === "month" ? "active" : ""
+                period === "month"
+                  ? "active"
+                  : ""
               }
-              onClick={() => setPeriod("month")}
+              onClick={() =>
+                setPeriod("month")
+              }
             >
               Bulan
             </button>
@@ -1084,7 +1699,9 @@ function Dashboard({ user, household, onLogout }) {
         {incomeError && (
           <div
             className="login-error"
-            style={{ marginBottom: "10px" }}
+            style={{
+              marginBottom: "10px",
+            }}
           >
             {incomeError}
           </div>
@@ -1093,22 +1710,39 @@ function Dashboard({ user, household, onLogout }) {
         {expenseError && (
           <div
             className="login-error"
-            style={{ marginBottom: "10px" }}
+            style={{
+              marginBottom: "10px",
+            }}
           >
             {expenseError}
           </div>
         )}
 
+        {debtError && (
+          <div
+            className="login-error"
+            style={{
+              marginBottom: "10px",
+            }}
+          >
+            {debtError}
+          </div>
+        )}
+
         <section className="stats-grid">
           <StatCard
-            icon={<ArrowUpCircle />}
+            icon={
+              <ArrowUpCircle />
+            }
             title="Total Pemasukan"
             value={totalIncome}
             type="income"
           />
 
           <StatCard
-            icon={<ArrowDownCircle />}
+            icon={
+              <ArrowDownCircle />
+            }
             title="Total Pengeluaran"
             value={totalExpenses}
             type="expense"
@@ -1131,38 +1765,52 @@ function Dashboard({ user, household, onLogout }) {
 
         <section className="action-grid">
           <ActionButton
-            icon={<ArrowUpCircle />}
+            icon={
+              <ArrowUpCircle />
+            }
             title="Pemasukan"
             subtitle="Tambah pemasukan"
-            onClick={() => setShowIncome(true)}
+            onClick={() =>
+              setShowIncome(true)
+            }
           />
 
           <ActionButton
-            icon={<ArrowDownCircle />}
+            icon={
+              <ArrowDownCircle />
+            }
             title="Pengeluaran"
             subtitle="Tambah pengeluaran"
-            onClick={() => setShowExpense(true)}
+            onClick={() =>
+              setShowExpense(true)
+            }
           />
 
           <ActionButton
             icon={<CreditCard />}
             title="Cicilan"
             subtitle="Kelola cicilan"
-            onClick={() => setShowDebt(true)}
+            onClick={() =>
+              setShowDebt(true)
+            }
           />
 
           <ActionButton
             icon={<Target />}
             title="Target"
             subtitle="Target tabungan"
-            onClick={() => setShowGoal(true)}
+            onClick={() =>
+              setShowGoal(true)
+            }
           />
         </section>
 
         <section className="content-grid">
           <TransactionSection
             title="Pemasukan"
-            icon={<ArrowUpCircle />}
+            icon={
+              <ArrowUpCircle />
+            }
             items={filteredIncome}
             type="income"
             emptyText={
@@ -1171,13 +1819,17 @@ function Dashboard({ user, household, onLogout }) {
                 : "Belum ada pemasukan."
             }
             onEdit={startEdit}
-            onDelete={deleteIncome}
+            onDelete={
+              deleteIncome
+            }
             saving={incomeSaving}
           />
 
           <TransactionSection
             title="Pengeluaran"
-            icon={<ArrowDownCircle />}
+            icon={
+              <ArrowDownCircle />
+            }
             items={filteredExpenses}
             type="expenses"
             emptyText={
@@ -1186,7 +1838,9 @@ function Dashboard({ user, household, onLogout }) {
                 : "Belum ada pengeluaran."
             }
             onEdit={startEdit}
-            onDelete={deleteExpense}
+            onDelete={
+              deleteExpense
+            }
             saving={expenseSaving}
           />
 
@@ -1195,9 +1849,14 @@ function Dashboard({ user, household, onLogout }) {
             icon={<CreditCard />}
             items={filteredDebts}
             type="debts"
-            emptyText="Belum ada cicilan."
+            emptyText={
+              debtLoading
+                ? "Memuat cicilan..."
+                : "Belum ada cicilan."
+            }
             onEdit={startEdit}
-            onDelete={deleteLocalItem}
+            onDelete={deleteDebt}
+            saving={debtSaving}
           />
 
           <TransactionSection
@@ -1207,13 +1866,37 @@ function Dashboard({ user, household, onLogout }) {
             type="goals"
             emptyText="Belum ada target."
             onEdit={startEdit}
-            onDelete={deleteLocalItem}
+            onDelete={
+              deleteLocalGoal
+            }
           />
         </section>
+
+        {filteredDebts.length >
+          0 && (
+          <div
+            style={{
+              marginTop: "14px",
+              padding: "12px 15px",
+              background: "#edf8f1",
+              border: "1px solid #dff1e7",
+              borderRadius: "12px",
+              color: "#286049",
+              fontSize: "12px",
+            }}
+          >
+            Total sisa cicilan:{" "}
+            <strong>
+              {formatRupiah(
+                totalDebtRemaining
+              )}
+            </strong>
+          </div>
+        )}
       </main>
 
       {/* ===================================================
-          MODAL TAMBAH
+          TAMBAH PEMASUKAN
       =================================================== */}
 
       {showIncome && (
@@ -1229,6 +1912,10 @@ function Dashboard({ user, household, onLogout }) {
         </Modal>
       )}
 
+      {/* ===================================================
+          TAMBAH PENGELUARAN
+      =================================================== */}
+
       {showExpense && (
         <Modal
           title="Tambah Pengeluaran"
@@ -1242,6 +1929,10 @@ function Dashboard({ user, household, onLogout }) {
         </Modal>
       )}
 
+      {/* ===================================================
+          TAMBAH CICILAN
+      =================================================== */}
+
       {showDebt && (
         <Modal
           title="Tambah Cicilan"
@@ -1250,9 +1941,14 @@ function Dashboard({ user, household, onLogout }) {
           <DebtForm
             onSubmit={addDebt}
             onCancel={closeForms}
+            saving={debtSaving}
           />
         </Modal>
       )}
+
+      {/* ===================================================
+          TAMBAH TARGET
+      =================================================== */}
 
       {showGoal && (
         <Modal
@@ -1267,52 +1963,97 @@ function Dashboard({ user, household, onLogout }) {
       )}
 
       {/* ===================================================
-          MODAL EDIT
+          EDIT PEMASUKAN
       =================================================== */}
 
-      {editing?.type === "income" && (
+      {editing?.type ===
+        "income" && (
         <Modal
           title="Edit Pemasukan"
-          onClose={() => setEditing(null)}
+          onClose={() =>
+            setEditing(null)
+          }
         >
           <EditIncomeForm
             item={editing.item}
             onSubmit={updateIncome}
-            onCancel={() => setEditing(null)}
+            onCancel={() =>
+              setEditing(null)
+            }
             saving={incomeSaving}
           />
         </Modal>
       )}
 
-      {editing?.type === "expenses" && (
+      {/* ===================================================
+          EDIT PENGELUARAN
+      =================================================== */}
+
+      {editing?.type ===
+        "expenses" && (
         <Modal
           title="Edit Pengeluaran"
-          onClose={() => setEditing(null)}
+          onClose={() =>
+            setEditing(null)
+          }
         >
           <EditExpenseForm
             item={editing.item}
             onSubmit={updateExpense}
-            onCancel={() => setEditing(null)}
+            onCancel={() =>
+              setEditing(null)
+            }
             saving={expenseSaving}
           />
         </Modal>
       )}
 
-      {editing &&
-        editing.type !== "income" &&
-        editing.type !== "expenses" && (
-          <Modal
-            title="Edit Data"
-            onClose={() => setEditing(null)}
-          >
-            <EditLocalForm
-              type={editing.type}
-              item={editing.item}
-              onSubmit={updateLocalItem}
-              onCancel={() => setEditing(null)}
-            />
-          </Modal>
-        )}
+      {/* ===================================================
+          EDIT CICILAN
+      =================================================== */}
+
+      {editing?.type ===
+        "debts" && (
+        <Modal
+          title="Edit Cicilan"
+          onClose={() =>
+            setEditing(null)
+          }
+        >
+          <EditDebtForm
+            item={editing.item}
+            onSubmit={updateDebt}
+            onCancel={() =>
+              setEditing(null)
+            }
+            saving={debtSaving}
+          />
+        </Modal>
+      )}
+
+      {/* ===================================================
+          EDIT TARGET
+      =================================================== */}
+
+      {editing?.type ===
+        "goals" && (
+        <Modal
+          title="Edit Target"
+          onClose={() =>
+            setEditing(null)
+          }
+        >
+          <EditGoalForm
+            item={editing.item}
+            onSubmit={
+              updateLocalGoal
+            }
+            onCancel={() =>
+              setEditing(null)
+            }
+          />
+        </Modal>
+      )}
     </div>
   );
 }
@@ -1328,13 +2069,19 @@ function StatCard({
   type,
 }) {
   return (
-    <div className={`stat-card ${type}`}>
-      <div className="stat-icon">{icon}</div>
+    <div
+      className={`stat-card ${type}`}
+    >
+      <div className="stat-icon">
+        {icon}
+      </div>
 
       <div>
         <span>{title}</span>
 
-        <strong>{formatRupiah(value)}</strong>
+        <strong>
+          {formatRupiah(value)}
+        </strong>
       </div>
     </div>
   );
@@ -1362,7 +2109,9 @@ function ActionButton({
       <div>
         <strong>{title}</strong>
 
-        <span>{subtitle}</span>
+        <span>
+          {subtitle}
+        </span>
       </div>
 
       <Plus size={19} />
@@ -1400,7 +2149,9 @@ function TransactionSection({
 
       {items.length === 0 ? (
         <div className="empty-state">
-          <p>{emptyText}</p>
+          <p>
+            {emptyText}
+          </p>
         </div>
       ) : (
         <div className="transaction-list">
@@ -1427,22 +2178,36 @@ function TransactionSection({
                     {item.date}
                   </span>
                 )}
+
+                {type ===
+                  "debts" && (
+                  <span className="transaction-date">
+                    Sisa:{" "}
+                    {formatRupiah(
+                      item.remaining
+                    )}
+                  </span>
+                )}
               </div>
 
               <div className="transaction-right">
                 <strong>
                   {formatRupiah(
-                    item.amount ??
-                      item.saved ??
-                      item.target ??
-                      item.remaining
+                    type === "debts"
+                      ? item.remaining
+                      : item.amount ??
+                          item.saved ??
+                          item.target
                   )}
                 </strong>
 
                 <div className="item-actions">
                   <button
                     onClick={() =>
-                      onEdit(type, item)
+                      onEdit(
+                        type,
+                        item
+                      )
                     }
                     title="Edit"
                     disabled={saving}
@@ -1452,7 +2217,10 @@ function TransactionSection({
 
                   <button
                     onClick={() =>
-                      onDelete(type, item.id)
+                      onDelete(
+                        type,
+                        item.id
+                      )
                     }
                     title="Hapus"
                     disabled={saving}
@@ -1484,7 +2252,9 @@ function Modal({
         <div className="modal-header">
           <h3>{title}</h3>
 
-          <button onClick={onClose}>
+          <button
+            onClick={onClose}
+          >
             <X size={20} />
           </button>
         </div>
@@ -1576,7 +2346,9 @@ function IncomeForm({
       className="form"
       onSubmit={handleSubmit}
     >
-      <label>Pemasukan untuk</label>
+      <label>
+        Pemasukan untuk
+      </label>
 
       <select
         value={owner}
@@ -1586,7 +2358,9 @@ function IncomeForm({
       >
         <option>Ahmed</option>
         <option>Nia</option>
-        <option>Lainnya</option>
+        <option>
+          Lainnya
+        </option>
       </select>
 
       <label>Nominal</label>
@@ -1597,18 +2371,24 @@ function IncomeForm({
         placeholder="Contoh: 5000000"
         value={amount}
         onChange={(e) =>
-          setAmount(e.target.value)
+          setAmount(
+            e.target.value
+          )
         }
       />
 
-      <label>Keterangan</label>
+      <label>
+        Keterangan
+      </label>
 
       <input
         type="text"
         placeholder="Contoh: Gaji"
         value={description}
         onChange={(e) =>
-          setDescription(e.target.value)
+          setDescription(
+            e.target.value
+          )
         }
       />
 
@@ -1618,7 +2398,9 @@ function IncomeForm({
         type="date"
         value={date}
         onChange={(e) =>
-          setDate(e.target.value)
+          setDate(
+            e.target.value
+          )
         }
       />
 
@@ -1641,13 +2423,19 @@ function EditIncomeForm({
   saving,
 }) {
   const [owner, setOwner] =
-    useState(item.owner || "Ahmed");
+    useState(
+      item.owner || "Ahmed"
+    );
 
   const [amount, setAmount] =
-    useState(item.amount ?? "");
+    useState(
+      item.amount ?? ""
+    );
 
   const [description, setDescription] =
-    useState(item.description || "");
+    useState(
+      item.description || ""
+    );
 
   const [date, setDate] =
     useState(
@@ -1677,17 +2465,23 @@ function EditIncomeForm({
       className="form"
       onSubmit={handleSubmit}
     >
-      <label>Pemasukan untuk</label>
+      <label>
+        Pemasukan untuk
+      </label>
 
       <select
         value={owner}
         onChange={(e) =>
-          setOwner(e.target.value)
+          setOwner(
+            e.target.value
+          )
         }
       >
         <option>Ahmed</option>
         <option>Nia</option>
-        <option>Lainnya</option>
+        <option>
+          Lainnya
+        </option>
       </select>
 
       <label>Nominal</label>
@@ -1697,17 +2491,23 @@ function EditIncomeForm({
         min="0"
         value={amount}
         onChange={(e) =>
-          setAmount(e.target.value)
+          setAmount(
+            e.target.value
+          )
         }
       />
 
-      <label>Keterangan</label>
+      <label>
+        Keterangan
+      </label>
 
       <input
         type="text"
         value={description}
         onChange={(e) =>
-          setDescription(e.target.value)
+          setDescription(
+            e.target.value
+          )
         }
       />
 
@@ -1717,7 +2517,9 @@ function EditIncomeForm({
         type="date"
         value={date}
         onChange={(e) =>
-          setDate(e.target.value)
+          setDate(
+            e.target.value
+          )
         }
       />
 
@@ -1766,14 +2568,18 @@ function ExpenseForm({
       className="form"
       onSubmit={handleSubmit}
     >
-      <label>Keterangan</label>
+      <label>
+        Keterangan
+      </label>
 
       <input
         type="text"
         placeholder="Contoh: Makan"
         value={name}
         onChange={(e) =>
-          setName(e.target.value)
+          setName(
+            e.target.value
+          )
         }
       />
 
@@ -1785,7 +2591,9 @@ function ExpenseForm({
         placeholder="Contoh: 100000"
         value={amount}
         onChange={(e) =>
-          setAmount(e.target.value)
+          setAmount(
+            e.target.value
+          )
         }
       />
 
@@ -1795,7 +2603,9 @@ function ExpenseForm({
         type="date"
         value={date}
         onChange={(e) =>
-          setDate(e.target.value)
+          setDate(
+            e.target.value
+          )
         }
       />
 
@@ -1821,7 +2631,9 @@ function EditExpenseForm({
     useState(item.name || "");
 
   const [amount, setAmount] =
-    useState(item.amount ?? "");
+    useState(
+      item.amount ?? ""
+    );
 
   const [date, setDate] =
     useState(
@@ -1850,13 +2662,17 @@ function EditExpenseForm({
       className="form"
       onSubmit={handleSubmit}
     >
-      <label>Keterangan</label>
+      <label>
+        Keterangan
+      </label>
 
       <input
         type="text"
         value={name}
         onChange={(e) =>
-          setName(e.target.value)
+          setName(
+            e.target.value
+          )
         }
       />
 
@@ -1867,7 +2683,9 @@ function EditExpenseForm({
         min="0"
         value={amount}
         onChange={(e) =>
-          setAmount(e.target.value)
+          setAmount(
+            e.target.value
+          )
         }
       />
 
@@ -1877,7 +2695,9 @@ function EditExpenseForm({
         type="date"
         value={date}
         onChange={(e) =>
-          setDate(e.target.value)
+          setDate(
+            e.target.value
+          )
         }
       />
 
@@ -1896,9 +2716,8 @@ function EditExpenseForm({
 function DebtForm({
   onSubmit,
   onCancel,
+  saving,
 }) {
-  const now = new Date();
-
   const [name, setName] =
     useState("");
 
@@ -1908,21 +2727,26 @@ function DebtForm({
   const [remaining, setRemaining] =
     useState("");
 
+  const [date, setDate] =
+    useState(getToday());
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!name || !amount) {
+    if (
+      !name ||
+      !amount ||
+      !remaining
+    ) {
       return;
     }
 
     onSubmit({
       name,
       amount: Number(amount),
-      remaining: Number(
-        remaining || amount
-      ),
-      year: now.getFullYear(),
-      month: now.getMonth() + 1,
+      remaining:
+        Number(remaining),
+      date,
     });
   };
 
@@ -1931,41 +2755,190 @@ function DebtForm({
       className="form"
       onSubmit={handleSubmit}
     >
-      <label>Nama Cicilan</label>
+      <label>
+        Nama Cicilan
+      </label>
 
       <input
         type="text"
         placeholder="Contoh: Motor"
         value={name}
         onChange={(e) =>
-          setName(e.target.value)
+          setName(
+            e.target.value
+          )
         }
       />
 
-      <label>Total Cicilan</label>
+      <label>
+        Total Cicilan
+      </label>
+
+      <input
+        type="number"
+        min="0"
+        placeholder="Contoh: 20000000"
+        value={amount}
+        onChange={(e) =>
+          setAmount(
+            e.target.value
+          )
+        }
+      />
+
+      <label>
+        Sisa Cicilan
+      </label>
+
+      <input
+        type="number"
+        min="0"
+        placeholder="Contoh: 15000000"
+        value={remaining}
+        onChange={(e) =>
+          setRemaining(
+            e.target.value
+          )
+        }
+      />
+
+      <label>Tanggal</label>
+
+      <input
+        type="date"
+        value={date}
+        onChange={(e) =>
+          setDate(
+            e.target.value
+          )
+        }
+      />
+
+      <FormActions
+        onCancel={onCancel}
+        saving={saving}
+      />
+    </form>
+  );
+}
+
+/* =========================================================
+   EDIT CICILAN
+========================================================= */
+
+function EditDebtForm({
+  item,
+  onSubmit,
+  onCancel,
+  saving,
+}) {
+  const [name, setName] =
+    useState(
+      item.name || ""
+    );
+
+  const [amount, setAmount] =
+    useState(
+      item.amount ?? ""
+    );
+
+  const [remaining, setRemaining] =
+    useState(
+      item.remaining ?? ""
+    );
+
+  const [date, setDate] =
+    useState(
+      item.transaction_date ||
+        item.date ||
+        getToday()
+    );
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (
+      !name ||
+      !amount ||
+      remaining === ""
+    ) {
+      return;
+    }
+
+    onSubmit({
+      ...item,
+      name,
+      amount: Number(amount),
+      remaining:
+        Number(remaining),
+      date,
+    });
+  };
+
+  return (
+    <form
+      className="form"
+      onSubmit={handleSubmit}
+    >
+      <label>
+        Nama Cicilan
+      </label>
+
+      <input
+        type="text"
+        value={name}
+        onChange={(e) =>
+          setName(
+            e.target.value
+          )
+        }
+      />
+
+      <label>
+        Total Cicilan
+      </label>
 
       <input
         type="number"
         min="0"
         value={amount}
         onChange={(e) =>
-          setAmount(e.target.value)
+          setAmount(
+            e.target.value
+          )
         }
       />
 
-      <label>Sisa Cicilan</label>
+      <label>
+        Sisa Cicilan
+      </label>
 
       <input
         type="number"
         min="0"
         value={remaining}
         onChange={(e) =>
-          setRemaining(e.target.value)
+          setRemaining(
+            e.target.value
+          )
+        }
+      />
+
+      <label>Tanggal</label>
+
+      <input
+        type="date"
+        value={date}
+        onChange={(e) =>
+          setDate(
+            e.target.value
+          )
         }
       />
 
       <FormActions
         onCancel={onCancel}
+        saving={saving}
       />
     </form>
   );
@@ -2001,16 +2974,17 @@ function GoalForm({
       return;
     }
 
-    const now = new Date();
-
     onSubmit({
       name,
       target: Number(target),
-      saved: Number(saved || 0),
-      monthly: Number(monthly || 0),
-      target_date: targetDate,
-      year: now.getFullYear(),
-      month: now.getMonth() + 1,
+      saved: Number(
+        saved || 0
+      ),
+      monthly: Number(
+        monthly || 0
+      ),
+      target_date:
+        targetDate,
     });
   };
 
@@ -2019,14 +2993,18 @@ function GoalForm({
       className="form"
       onSubmit={handleSubmit}
     >
-      <label>Nama Target</label>
+      <label>
+        Nama Target
+      </label>
 
       <input
         type="text"
         placeholder="Contoh: Dana Nikah"
         value={name}
         onChange={(e) =>
-          setName(e.target.value)
+          setName(
+            e.target.value
+          )
         }
       />
 
@@ -2037,39 +3015,53 @@ function GoalForm({
         min="0"
         value={target}
         onChange={(e) =>
-          setTarget(e.target.value)
+          setTarget(
+            e.target.value
+          )
         }
       />
 
-      <label>Sudah Terkumpul</label>
+      <label>
+        Sudah Terkumpul
+      </label>
 
       <input
         type="number"
         min="0"
         value={saved}
         onChange={(e) =>
-          setSaved(e.target.value)
+          setSaved(
+            e.target.value
+          )
         }
       />
 
-      <label>Tabungan per Bulan</label>
+      <label>
+        Tabungan per Bulan
+      </label>
 
       <input
         type="number"
         min="0"
         value={monthly}
         onChange={(e) =>
-          setMonthly(e.target.value)
+          setMonthly(
+            e.target.value
+          )
         }
       />
 
-      <label>Target Tanggal</label>
+      <label>
+        Target Tanggal
+      </label>
 
       <input
         type="date"
         value={targetDate}
         onChange={(e) =>
-          setTargetDate(e.target.value)
+          setTargetDate(
+            e.target.value
+          )
         }
       />
 
@@ -2081,60 +3073,54 @@ function GoalForm({
 }
 
 /* =========================================================
-   EDIT CICILAN / TARGET
+   EDIT TARGET
 ========================================================= */
 
-function EditLocalForm({
-  type,
+function EditGoalForm({
   item,
   onSubmit,
   onCancel,
 }) {
   const [name, setName] =
-    useState(item.name || "");
-
-  const [amount, setAmount] =
-    useState(item.amount ?? "");
-
-  const [remaining, setRemaining] =
-    useState(item.remaining ?? "");
+    useState(
+      item.name || ""
+    );
 
   const [target, setTarget] =
-    useState(item.target ?? "");
+    useState(
+      item.target ?? ""
+    );
 
   const [saved, setSaved] =
-    useState(item.saved ?? "");
+    useState(
+      item.saved ?? ""
+    );
 
   const [monthly, setMonthly] =
-    useState(item.monthly ?? "");
+    useState(
+      item.monthly ?? ""
+    );
 
   const [date, setDate] =
-    useState(item.target_date || "");
+    useState(
+      item.target_date || ""
+    );
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (type === "debts") {
-      onSubmit({
-        ...item,
-        name,
-        amount: Number(amount),
-        remaining: Number(remaining),
-      });
-
+    if (!name || !target) {
       return;
     }
 
-    if (type === "goals") {
-      onSubmit({
-        ...item,
-        name,
-        target: Number(target),
-        saved: Number(saved),
-        monthly: Number(monthly),
-        target_date: date,
-      });
-    }
+    onSubmit({
+      ...item,
+      name,
+      target: Number(target),
+      saved: Number(saved),
+      monthly: Number(monthly),
+      target_date: date,
+    });
   };
 
   return (
@@ -2142,88 +3128,76 @@ function EditLocalForm({
       className="form"
       onSubmit={handleSubmit}
     >
-      <label>Nama / Keterangan</label>
+      <label>
+        Nama Target
+      </label>
 
       <input
         type="text"
         value={name}
         onChange={(e) =>
-          setName(e.target.value)
+          setName(
+            e.target.value
+          )
         }
       />
 
-      {type === "debts" && (
-        <>
-          <label>Total Cicilan</label>
+      <label>Target</label>
 
-          <input
-            type="number"
-            min="0"
-            value={amount}
-            onChange={(e) =>
-              setAmount(e.target.value)
-            }
-          />
+      <input
+        type="number"
+        min="0"
+        value={target}
+        onChange={(e) =>
+          setTarget(
+            e.target.value
+          )
+        }
+      />
 
-          <label>Sisa Cicilan</label>
+      <label>
+        Sudah Terkumpul
+      </label>
 
-          <input
-            type="number"
-            min="0"
-            value={remaining}
-            onChange={(e) =>
-              setRemaining(e.target.value)
-            }
-          />
-        </>
-      )}
+      <input
+        type="number"
+        min="0"
+        value={saved}
+        onChange={(e) =>
+          setSaved(
+            e.target.value
+          )
+        }
+      />
 
-      {type === "goals" && (
-        <>
-          <label>Target</label>
+      <label>
+        Tabungan per Bulan
+      </label>
 
-          <input
-            type="number"
-            min="0"
-            value={target}
-            onChange={(e) =>
-              setTarget(e.target.value)
-            }
-          />
+      <input
+        type="number"
+        min="0"
+        value={monthly}
+        onChange={(e) =>
+          setMonthly(
+            e.target.value
+          )
+        }
+      />
 
-          <label>Sudah Terkumpul</label>
+      <label>
+        Target Tanggal
+      </label>
 
-          <input
-            type="number"
-            min="0"
-            value={saved}
-            onChange={(e) =>
-              setSaved(e.target.value)
-            }
-          />
-
-          <label>Tabungan per Bulan</label>
-
-          <input
-            type="number"
-            min="0"
-            value={monthly}
-            onChange={(e) =>
-              setMonthly(e.target.value)
-            }
-          />
-
-          <label>Target Tanggal</label>
-
-          <input
-            type="date"
-            value={date}
-            onChange={(e) =>
-              setDate(e.target.value)
-            }
-          />
-        </>
-      )}
+      <input
+        type="date"
+        value={date}
+        onChange={(e) =>
+          setDate(
+            e.target.value
+          )
+        }
+      />
 
       <FormActions
         onCancel={onCancel}
