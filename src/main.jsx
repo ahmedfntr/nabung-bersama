@@ -5,10 +5,19 @@ import "./index.css";
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/nabung-bersama/sw.js").catch(console.error);
+    navigator.serviceWorker
+      .register("/nabung-bersama/sw.js")
+      .then((registration) => {
+        console.log("Nabung Bersama PWA ready:", registration.scope);
+      })
+      .catch((error) => {
+        console.error("PWA registration failed:", error);
+      });
   });
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode><App /></React.StrictMode>
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
 );
