@@ -12,6 +12,8 @@ import {
   ArrowDownRight,
   PiggyBank,
   CircleDollarSign,
+  Pencil,
+  X,
 } from "lucide-react";
 
 const months = [
@@ -51,7 +53,6 @@ function App() {
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth() + 1);
 
-  // LOAD DATA YANG SUDAH TERSIMPAN
   const [data, setData] = useState(() => {
     try {
       const savedData = localStorage.getItem("nabung-bersama-data");
@@ -68,7 +69,6 @@ function App() {
     };
   });
 
-  // AUTO SAVE SETIAP ADA PERUBAHAN DATA
   useEffect(() => {
     try {
       localStorage.setItem(
@@ -84,6 +84,8 @@ function App() {
   const [showExpense, setShowExpense] = useState(false);
   const [showDebt, setShowDebt] = useState(false);
   const [showGoal, setShowGoal] = useState(false);
+
+  const [editing, setEditing] = useState(null);
 
   const [incomeForm, setIncomeForm] = useState({
     owner: "Ahmed",
@@ -179,6 +181,14 @@ function App() {
     totalIncome > 0
       ? Math.round((totalSaving / totalIncome) * 100)
       : 0;
+
+  const closeForms = () => {
+    setShowIncome(false);
+    setShowExpense(false);
+    setShowDebt(false);
+    setShowGoal(false);
+    setEditing(null);
+  };
 
   const addIncome = () => {
     if (!incomeForm.amount) return;
@@ -305,6 +315,176 @@ function App() {
       ...prev,
       [type]: prev[type].filter((item) => item.id !== id),
     }));
+  };
+
+  const startEdit = (type, item) => {
+    setEditing({
+      type,
+      id: item.id,
+    });
+
+    setShowIncome(false);
+    setShowExpense(false);
+    setShowDebt(false);
+    setShowGoal(false);
+
+    if (type === "income") {
+      setIncomeForm({
+        owner: item.owner || "Ahmed",
+        description: item.name || "",
+        amount: item.amount || "",
+        date: item.year
+          ? `${item.year}-${String(item.month).padStart(2, "0")}-01`
+          : "",
+      });
+    }
+
+    if (type === "expenses") {
+      setExpenseForm({
+        name: item.name || "",
+        amount: item.amount || "",
+        date: item.year
+          ? `${item.year}-${String(item.month).padStart(2, "0")}-01`
+          : "",
+      });
+    }
+
+    if (type === "debts") {
+      setDebtForm({
+        name: item.name || "",
+        amount: item.amount || "",
+        remaining: item.remaining || "",
+      });
+    }
+
+    if (type === "goals") {
+      setGoalForm({
+        name: item.name || "",
+        target: item.target || "",
+        saved: item.saved || "",
+        monthly: item.monthly || "",
+      });
+    }
+  };
+
+  const updateItem = () => {
+    if (!editing) return;
+
+    const { type, id } = editing;
+
+    if (type === "income") {
+      if (!incomeForm.amount) return;
+
+      const date = incomeForm.date
+        ? new Date(incomeForm.date)
+        : new Date();
+
+      setData((prev) => ({
+        ...prev,
+        income: prev.income.map((item) =>
+          item.id === id
+            ? {
+                ...item,
+                owner: incomeForm.owner,
+                name:
+                  incomeForm.description.trim() ||
+                  `Pemasukan ${incomeForm.owner}`,
+                amount: Number(incomeForm.amount),
+                year: date.getFullYear(),
+                month: date.getMonth() + 1,
+              }
+            : item
+        ),
+      }));
+
+      setIncomeForm({
+        owner: "Ahmed",
+        description: "",
+        amount: "",
+        date: "",
+      });
+    }
+
+    if (type === "expenses") {
+      if (!expenseForm.name || !expenseForm.amount) return;
+
+      const date = expenseForm.date
+        ? new Date(expenseForm.date)
+        : new Date();
+
+      setData((prev) => ({
+        ...prev,
+        expenses: prev.expenses.map((item) =>
+          item.id === id
+            ? {
+                ...item,
+                name: expenseForm.name,
+                amount: Number(expenseForm.amount),
+                year: date.getFullYear(),
+                month: date.getMonth() + 1,
+              }
+            : item
+        ),
+      }));
+
+      setExpenseForm({
+        name: "",
+        amount: "",
+        date: "",
+      });
+    }
+
+    if (type === "debts") {
+      if (!debtForm.name || !debtForm.amount) return;
+
+      setData((prev) => ({
+        ...prev,
+        debts: prev.debts.map((item) =>
+          item.id === id
+            ? {
+                ...item,
+                name: debtForm.name,
+                amount: Number(debtForm.amount),
+                remaining: Number(debtForm.remaining || 0),
+              }
+            : item
+        ),
+      }));
+
+      setDebtForm({
+        name: "",
+        amount: "",
+        remaining: "",
+      });
+    }
+
+    if (type === "goals") {
+      if (!goalForm.name || !goalForm.target) return;
+
+      setData((prev) => ({
+        ...prev,
+        goals: prev.goals.map((item) =>
+          item.id === id
+            ? {
+                ...item,
+                name: goalForm.name,
+                target: Number(goalForm.target),
+                saved: Number(goalForm.saved || 0),
+                monthly: Number(goalForm.monthly || 0),
+              }
+            : item
+        ),
+      }));
+
+      setGoalForm({
+        name: "",
+        target: "",
+        saved: "",
+        monthly: "",
+      });
+    }
+
+    setEditing(null);
   };
 
   const periodLabel =
@@ -442,7 +622,10 @@ function App() {
             subtitle="Tambah pemasukan Ahmed, Nia, atau sumber lainnya."
             icon={<Wallet size={18} />}
             button="+ Tambah"
-            onClick={() => setShowIncome(!showIncome)}
+            onClick={() => {
+              setEditing(null);
+              setShowIncome(!showIncome);
+            }}
           >
             {showIncome && (
               <FormBox>
@@ -500,10 +683,67 @@ function App() {
               </FormBox>
             )}
 
+            {editing?.type === "income" && (
+              <EditForm
+                title="Edit Pemasukan"
+                onCancel={closeForms}
+                onSave={updateItem}
+              >
+                <select
+                  value={incomeForm.owner}
+                  onChange={(e) =>
+                    setIncomeForm({
+                      ...incomeForm,
+                      owner: e.target.value,
+                    })
+                  }
+                >
+                  <option>Ahmed</option>
+                  <option>Nia</option>
+                  <option>Lainnya</option>
+                </select>
+
+                <input
+                  placeholder="Keterangan"
+                  value={incomeForm.description}
+                  onChange={(e) =>
+                    setIncomeForm({
+                      ...incomeForm,
+                      description: e.target.value,
+                    })
+                  }
+                />
+
+                <input
+                  type="number"
+                  placeholder="Nominal"
+                  value={incomeForm.amount}
+                  onChange={(e) =>
+                    setIncomeForm({
+                      ...incomeForm,
+                      amount: e.target.value,
+                    })
+                  }
+                />
+
+                <input
+                  type="date"
+                  value={incomeForm.date}
+                  onChange={(e) =>
+                    setIncomeForm({
+                      ...incomeForm,
+                      date: e.target.value,
+                    })
+                  }
+                />
+              </EditForm>
+            )}
+
             <TransactionList
               items={filtered.income}
               type="income"
               removeItem={removeItem}
+              startEdit={startEdit}
             />
           </SectionCard>
 
@@ -512,7 +752,10 @@ function App() {
             subtitle="Catat kebutuhan rutin dan pengeluaran lainnya."
             icon={<Home size={18} />}
             button="+ Tambah"
-            onClick={() => setShowExpense(!showExpense)}
+            onClick={() => {
+              setEditing(null);
+              setShowExpense(!showExpense);
+            }}
           >
             {showExpense && (
               <FormBox>
@@ -556,10 +799,53 @@ function App() {
               </FormBox>
             )}
 
+            {editing?.type === "expenses" && (
+              <EditForm
+                title="Edit Pengeluaran"
+                onCancel={closeForms}
+                onSave={updateItem}
+              >
+                <input
+                  placeholder="Nama pengeluaran"
+                  value={expenseForm.name}
+                  onChange={(e) =>
+                    setExpenseForm({
+                      ...expenseForm,
+                      name: e.target.value,
+                    })
+                  }
+                />
+
+                <input
+                  type="number"
+                  placeholder="Nominal"
+                  value={expenseForm.amount}
+                  onChange={(e) =>
+                    setExpenseForm({
+                      ...expenseForm,
+                      amount: e.target.value,
+                    })
+                  }
+                />
+
+                <input
+                  type="date"
+                  value={expenseForm.date}
+                  onChange={(e) =>
+                    setExpenseForm({
+                      ...expenseForm,
+                      date: e.target.value,
+                    })
+                  }
+                />
+              </EditForm>
+            )}
+
             <TransactionList
               items={filtered.expenses}
               type="expenses"
               removeItem={removeItem}
+              startEdit={startEdit}
             />
           </SectionCard>
 
@@ -568,7 +854,10 @@ function App() {
             subtitle="Pantau pembayaran dan sisa kewajiban."
             icon={<CreditCard size={18} />}
             button="+ Tambah"
-            onClick={() => setShowDebt(!showDebt)}
+            onClick={() => {
+              setEditing(null);
+              setShowDebt(!showDebt);
+            }}
           >
             {showDebt && (
               <FormBox>
@@ -613,10 +902,54 @@ function App() {
               </FormBox>
             )}
 
+            {editing?.type === "debts" && (
+              <EditForm
+                title="Edit Cicilan / Utang"
+                onCancel={closeForms}
+                onSave={updateItem}
+              >
+                <input
+                  placeholder="Nama cicilan / utang"
+                  value={debtForm.name}
+                  onChange={(e) =>
+                    setDebtForm({
+                      ...debtForm,
+                      name: e.target.value,
+                    })
+                  }
+                />
+
+                <input
+                  type="number"
+                  placeholder="Bayar bulan ini"
+                  value={debtForm.amount}
+                  onChange={(e) =>
+                    setDebtForm({
+                      ...debtForm,
+                      amount: e.target.value,
+                    })
+                  }
+                />
+
+                <input
+                  type="number"
+                  placeholder="Sisa utang"
+                  value={debtForm.remaining}
+                  onChange={(e) =>
+                    setDebtForm({
+                      ...debtForm,
+                      remaining: e.target.value,
+                    })
+                  }
+                />
+              </EditForm>
+            )}
+
             <TransactionList
               items={filtered.debts}
               type="debts"
               removeItem={removeItem}
+              startEdit={startEdit}
               showRemaining
             />
           </SectionCard>
@@ -628,7 +961,10 @@ function App() {
             subtitle="Tentukan target dan setoran bulanannya."
             icon={<Target size={18} />}
             button="+ Target"
-            onClick={() => setShowGoal(!showGoal)}
+            onClick={() => {
+              setEditing(null);
+              setShowGoal(!showGoal);
+            }}
           >
             {showGoal && (
               <FormBox className="goal-form">
@@ -685,6 +1021,61 @@ function App() {
               </FormBox>
             )}
 
+            {editing?.type === "goals" && (
+              <EditForm
+                title="Edit Target Tabungan"
+                onCancel={closeForms}
+                onSave={updateItem}
+              >
+                <input
+                  placeholder="Nama target"
+                  value={goalForm.name}
+                  onChange={(e) =>
+                    setGoalForm({
+                      ...goalForm,
+                      name: e.target.value,
+                    })
+                  }
+                />
+
+                <input
+                  type="number"
+                  placeholder="Target"
+                  value={goalForm.target}
+                  onChange={(e) =>
+                    setGoalForm({
+                      ...goalForm,
+                      target: e.target.value,
+                    })
+                  }
+                />
+
+                <input
+                  type="number"
+                  placeholder="Sudah terkumpul"
+                  value={goalForm.saved}
+                  onChange={(e) =>
+                    setGoalForm({
+                      ...goalForm,
+                      saved: e.target.value,
+                    })
+                  }
+                />
+
+                <input
+                  type="number"
+                  placeholder="Setoran / bulan"
+                  value={goalForm.monthly}
+                  onChange={(e) =>
+                    setGoalForm({
+                      ...goalForm,
+                      monthly: e.target.value,
+                    })
+                  }
+                />
+              </EditForm>
+            )}
+
             <div className="goals">
               {filtered.goals.length === 0 ? (
                 <Empty
@@ -714,14 +1105,25 @@ function App() {
                           </span>
                         </div>
 
-                        <button
-                          className="icon-delete"
-                          onClick={() =>
-                            removeItem("goals", goal.id)
-                          }
-                        >
-                          <Trash2 size={15} />
-                        </button>
+                        <div className="action-buttons">
+                          <button
+                            className="icon-edit"
+                            onClick={() =>
+                              startEdit("goals", goal)
+                            }
+                          >
+                            <Pencil size={15} />
+                          </button>
+
+                          <button
+                            className="icon-delete"
+                            onClick={() =>
+                              removeItem("goals", goal.id)
+                            }
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
                       </div>
 
                       <div className="progress">
@@ -897,13 +1299,48 @@ function SectionCard({
 }
 
 function FormBox({ children, className = "" }) {
-  return <div className={`form-box ${className}`}>{children}</div>;
+  return (
+    <div className={`form-box ${className}`}>
+      {children}
+    </div>
+  );
+}
+
+function EditForm({ title, children, onCancel, onSave }) {
+  return (
+    <div className="form-box edit-form">
+      <div className="edit-form-header">
+        <strong>{title}</strong>
+
+        <button
+          className="icon-delete"
+          onClick={onCancel}
+          title="Batal"
+        >
+          <X size={15} />
+        </button>
+      </div>
+
+      {children}
+
+      <div className="edit-form-actions">
+        <button className="cancel-btn" onClick={onCancel}>
+          Batal
+        </button>
+
+        <button className="save-btn" onClick={onSave}>
+          Simpan Perubahan
+        </button>
+      </div>
+    </div>
+  );
 }
 
 function TransactionList({
   items,
   type,
   removeItem,
+  startEdit,
   showRemaining,
 }) {
   if (!items.length) {
@@ -949,12 +1386,23 @@ function TransactionList({
             {money(item.amount)}
           </strong>
 
-          <button
-            className="icon-delete"
-            onClick={() => removeItem(type, item.id)}
-          >
-            <Trash2 size={15} />
-          </button>
+          <div className="action-buttons">
+            <button
+              className="icon-edit"
+              onClick={() => startEdit(type, item)}
+              title="Edit"
+            >
+              <Pencil size={15} />
+            </button>
+
+            <button
+              className="icon-delete"
+              onClick={() => removeItem(type, item.id)}
+              title="Hapus"
+            >
+              <Trash2 size={15} />
+            </button>
+          </div>
         </div>
       ))}
     </div>
