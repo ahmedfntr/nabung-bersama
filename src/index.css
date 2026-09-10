@@ -1042,3 +1042,354 @@ footer {
     margin-left: auto;
   }
 }
+/* =========================================
+   RESPONSIVE - ALL DEVICES
+   ========================================= */
+
+/* TABLET & LAPTOP KECIL */
+@media (max-width: 1100px) {
+  .app {
+    width: min(94%, 1100px);
+  }
+
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hero {
+    gap: 30px;
+  }
+}
+
+
+/* TABLET */
+@media (max-width: 768px) {
+  .app {
+    width: min(94%, 680px);
+  }
+
+  .navbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .period-control {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .period-control select {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .hero {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 28px;
+  }
+
+  .hero-saving {
+    width: 100%;
+    text-align: left;
+  }
+
+  .hero-saving strong {
+    font-size: 32px;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .form-box {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .form-box .save-btn {
+    grid-column: span 2;
+  }
+
+  .transaction {
+    gap: 10px;
+  }
+}
+
+
+/* HP */
+@media (max-width: 560px) {
+  .app {
+    width: calc(100% - 24px);
+    margin: 12px auto;
+  }
+
+  .navbar {
+    gap: 12px;
+  }
+
+  .brand {
+    gap: 10px;
+  }
+
+  .brand-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .brand h1 {
+    font-size: 20px;
+  }
+
+  .brand p {
+    font-size: 11px;
+  }
+
+  .period-control {
+    padding: 8px;
+    gap: 6px;
+  }
+
+  .period-control select {
+    font-size: 12px;
+  }
+
+  .hero {
+    padding: 22px;
+    border-radius: 22px;
+  }
+
+  .hero h2 {
+    font-size: 27px;
+    line-height: 1.08;
+  }
+
+  .hero p {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .hero-saving strong {
+    font-size: 28px;
+  }
+
+  .stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 15px;
+    min-width: 0;
+  }
+
+  .stat-card strong {
+    font-size: 18px;
+    word-break: break-word;
+  }
+
+  .stat-card small {
+    font-size: 10px;
+  }
+
+  .stat-top span {
+    font-size: 11px;
+  }
+
+  .stat-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .card {
+    padding: 15px;
+    border-radius: 18px;
+  }
+
+  .section-title {
+    gap: 10px;
+  }
+
+  .title-line {
+    font-size: 15px;
+  }
+
+  .section-title p {
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .add-btn {
+    padding: 9px 11px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  /* FORM JADI VERTIKAL */
+  .form-box {
+    grid-template-columns: 1fr;
+    gap: 9px;
+    padding: 13px;
+  }
+
+  .form-box .save-btn {
+    grid-column: auto;
+    width: 100%;
+  }
+
+  .form-box input,
+  .form-box select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* EDIT FORM */
+  .edit-form {
+    padding: 13px;
+  }
+
+  .edit-form-header {
+    margin-bottom: 10px;
+  }
+
+  .edit-form-actions {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .edit-form-actions button {
+    width: 100%;
+  }
+
+  /* TRANSAKSI */
+  .transaction {
+    display: grid;
+    grid-template-columns: 38px 1fr auto;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 0;
+  }
+
+  .transaction-info {
+    min-width: 0;
+  }
+
+  .transaction-info strong {
+    display: block;
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .transaction-info span {
+    font-size: 10px;
+  }
+
+  .transaction-money {
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .transaction .action-buttons {
+    grid-column: 2 / 4;
+    justify-content: flex-end;
+    margin-top: 2px;
+  }
+
+  .icon-edit,
+  .icon-delete {
+    width: 31px;
+    height: 31px;
+  }
+
+  /* TARGET */
+  .goal-header {
+    align-items: flex-start;
+  }
+
+  .goal-header > div:first-child {
+    min-width: 0;
+  }
+
+  .goal-header strong {
+    font-size: 13px;
+  }
+
+  .goal-header span {
+    font-size: 10px;
+  }
+
+  /* SUMMARY */
+  .summary-row {
+    padding: 10px 0;
+  }
+
+  .summary-row span,
+  .summary-row strong {
+    font-size: 12px;
+  }
+
+  .summary-total {
+    padding: 13px 0;
+  }
+
+  .summary-total span,
+  .summary-total strong {
+    font-size: 14px;
+  }
+
+  .period-info {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+  }
+
+  .period-info div {
+    padding: 10px 6px;
+  }
+
+  .period-info span {
+    font-size: 9px;
+  }
+
+  .period-info strong {
+    font-size: 14px;
+  }
+}
+
+
+/* HP SANGAT KECIL */
+@media (max-width: 380px) {
+  .app {
+    width: calc(100% - 16px);
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .hero h2 {
+    font-size: 24px;
+  }
+
+  .period-control {
+    flex-wrap: wrap;
+  }
+
+  .period-control select {
+    min-width: 70px;
+  }
+
+  .add-btn {
+    padding: 8px 9px;
+  }
+}
