@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   Wallet,
   Plus,
@@ -8,7 +8,6 @@ import {
   Home,
   TrendingUp,
   CalendarDays,
-  ChevronDown,
   ArrowUpRight,
   ArrowDownRight,
   PiggyBank,
@@ -52,9 +51,34 @@ function App() {
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth() + 1);
 
-  const [data, setData] = useState({
-    ...initialData,
+  // LOAD DATA YANG SUDAH TERSIMPAN
+  const [data, setData] = useState(() => {
+    try {
+      const savedData = localStorage.getItem("nabung-bersama-data");
+
+      if (savedData) {
+        return JSON.parse(savedData);
+      }
+    } catch (error) {
+      console.error("Gagal membaca data tersimpan:", error);
+    }
+
+    return {
+      ...initialData,
+    };
   });
+
+  // AUTO SAVE SETIAP ADA PERUBAHAN DATA
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        "nabung-bersama-data",
+        JSON.stringify(data)
+      );
+    } catch (error) {
+      console.error("Gagal menyimpan data:", error);
+    }
+  }, [data]);
 
   const [showIncome, setShowIncome] = useState(false);
   const [showExpense, setShowExpense] = useState(false);
@@ -600,7 +624,6 @@ function App() {
 
         <div>
           <SectionCard
-            id="goals"
             title="Target Tabungan"
             subtitle="Tentukan target dan setoran bulanannya."
             icon={<Target size={18} />}
